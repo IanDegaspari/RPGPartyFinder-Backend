@@ -5,14 +5,13 @@ from ..database.database import Base
 from sqlalchemy.dialects.mysql import (
     VARCHAR,
     INTEGER,
-    UNSIGNED,
     TINYINT,
 )
 
 class User(Base):
     __tablename__ = "user"
 
-    id = Column(UNSIGNED, primary_key=True)
+    id = Column(INTEGER, primary_key=True)
     name = Column(VARCHAR)
     login = Column(VARCHAR)
     email = Column(VARCHAR)
@@ -21,7 +20,7 @@ class User(Base):
 class UserPreferences(Base):
     __tablename__ = "user_preferences"
 
-    user_id = Column(UNSIGNED, ForeignKey=True)
+    user_id = Column(INTEGER, ForeignKey=True)
     gm = Column(TINYINT)
     systems = Column(VARCHAR)
     scenarios = Column(VARCHAR)
