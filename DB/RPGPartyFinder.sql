@@ -3,6 +3,7 @@ CREATE TABLE `user` (
   `name` varchar(25),
   `login` varchar(50),
   `email` varchar(100),
+  `cellphone` varchar(15),
   `pass` varchar(200)
 );
 
@@ -46,18 +47,18 @@ CREATE TABLE `msg_to` (
   `to` int unsigned
 );
 
-ALTER TABLE `user_preferences` ADD FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE;
+ALTER TABLE `user_preferences` ADD FOREIGN KEY (`user_id`) REFERENCES `user` (`id`);
 
-ALTER TABLE `user_relations` ADD FOREIGN KEY (`user_0`) REFERENCES `user` (`id`) ON DELETE CASCADE;
+ALTER TABLE `user_relations` ADD FOREIGN KEY (`user_0`) REFERENCES `user` (`id`);
 
-ALTER TABLE `user_relations` ADD FOREIGN KEY (`user_1`) REFERENCES `user` (`id`) ON DELETE CASCADE;
+ALTER TABLE `user_relations` ADD FOREIGN KEY (`user_1`) REFERENCES `user` (`id`);
 
-ALTER TABLE `party_users` ADD FOREIGN KEY (`party_id`) REFERENCES `party` (`party_id`) ON DELETE CASCADE;
+ALTER TABLE `party_users` ADD FOREIGN KEY (`party_id`) REFERENCES `party` (`party_id`);
 
 ALTER TABLE `party_users` ADD FOREIGN KEY (`user_id`) REFERENCES `user` (`id`);
 
 ALTER TABLE `msg` ADD FOREIGN KEY (`by`) REFERENCES `user` (`id`);
 
-ALTER TABLE `msg_to` ADD FOREIGN KEY (`msg_id`) REFERENCES `msg` (`msg_id`) ON DELETE CASCADE;
+ALTER TABLE `msg_to` ADD FOREIGN KEY (`msg_id`) REFERENCES `msg` (`msg_id`);
 
-ALTER TABLE `msg_to` ADD FOREIGN KEY (`to`) REFERENCES `user` (`id`) ON DELETE CASCADE;
+ALTER TABLE `msg_to` ADD FOREIGN KEY (`to`) REFERENCES `user` (`id`);
