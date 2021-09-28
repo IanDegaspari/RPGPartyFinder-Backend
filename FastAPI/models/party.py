@@ -5,18 +5,19 @@ from ..database.database import Base
 from sqlalchemy.dialects.mysql import (
     VARCHAR,
     INTEGER,
-    UNSIGNED,
     TINYINT,
 )
 
 class Party(Base):
     __tablename__ = "party"
 
-    party_id = Column(UNSIGNED, primary_key=True)
+    party_id = Column(INTEGER, primary_key=True)
     name = Column(VARCHAR)
     desc = Column(VARCHAR)
 
-class Party(Base):
-    __tablename__ = "party"
+class PartyUsers(Base):
+    __tablename__ = "party_users"
 
-    party_id = Column(UNSIGNED, ForeignKey=True)
+    party_id = Column(INTEGER, ForeignKey=True)
+    user_id = Column(INTEGER, ForeignKey=True)
+    role = Column(TINYINT)
