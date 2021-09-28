@@ -3,7 +3,6 @@ CREATE TABLE `user` (
   `name` varchar(25),
   `login` varchar(50),
   `email` varchar(100),
-  `cellphone` varchar(15),
   `pass` varchar(200)
 );
 
