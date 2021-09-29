@@ -1,5 +1,5 @@
 CREATE TABLE `user` (
-  `id` int unsigned PRIMARY KEY,
+  `id` int unsigned PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(25),
   `login` varchar(50),
   `email` varchar(100),
@@ -18,11 +18,12 @@ CREATE TABLE `user_relations` (
   `user_0` int unsigned,
   `user_1` int unsigned,
   `swipe_0` tinyint,
-  `swipe_1` tinyint
+  `swipe_1` tinyint,
+  UNIQUE KEY `relation_id` (`user_0`, `user_1`)
 );
 
 CREATE TABLE `party` (
-  `party_id` int unsigned PRIMARY KEY,
+  `party_id` int unsigned PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(50),
   `desc` varchar(400)
 );
@@ -34,7 +35,7 @@ CREATE TABLE `party_users` (
 );
 
 CREATE TABLE `msg` (
-  `msg_id` int unsigned PRIMARY KEY,
+  `msg_id` int unsigned PRIMARY KEY AUTO_INCREMENT,
   `content` varchar(300),
   `by` int unsigned,
   `recipient_type` tinyint,
