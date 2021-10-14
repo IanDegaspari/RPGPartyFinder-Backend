@@ -3,7 +3,7 @@ CREATE TABLE `user` (
   `name` varchar(25),
   `login` varchar(50),
   `email` varchar(100),
-  `pass` varchar(200)
+  `password` varchar(200)
 );
 
 CREATE TABLE `user_preferences` (
