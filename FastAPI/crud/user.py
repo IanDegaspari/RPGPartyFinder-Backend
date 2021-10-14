@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 sys.path.append(os.path.abspath(Path(os.getcwd()) / ".." ))
 from schemas.user import UserPost
-from database.database import engine
+#from database.database import engine
 from models.user import UserModel
 import logging
 
@@ -18,7 +18,6 @@ def insert_user(db: Session, user: UserPost):
     try:
         db_user = UserModel(
             **user.dict())
-        
         db.add(db_user)
         db.commit()
         status = True

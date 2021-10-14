@@ -1,7 +1,12 @@
 from sqlalchemy import Column
 from sqlalchemy import Column
 from sqlalchemy.sql.schema import ForeignKey
-from ..database.database import Base
+import os
+import sys
+from pathlib import Path
+sys.path.append(os.path.abspath(Path(os.getcwd()) / ".."))
+from database.database import Base
+
 from sqlalchemy.dialects.mysql import (
     VARCHAR,
     INTEGER,
@@ -20,7 +25,7 @@ class User(Base):
 class UserPreferences(Base):
     __tablename__ = "user_preferences"
 
-    user_id = Column(INTEGER, ForeignKey=True)
+    user_id = Column(INTEGER)
     gm = Column(TINYINT)
     systems = Column(VARCHAR)
     scenarios = Column(VARCHAR)
@@ -29,7 +34,7 @@ class UserPreferences(Base):
 class UserRelations(Base):
     __tablename__ = "user_relations"
 
-    user_0 = Column(INTEGER, ForeignKey=True)
-    user_1 = Column(INTEGER, ForeignKey=True)
+    user_0 = Column(INTEGER)
+    user_1 = Column(INTEGER)
     swipe_0 = Column(TINYINT)
     swipe_1 = Column(TINYINT)
