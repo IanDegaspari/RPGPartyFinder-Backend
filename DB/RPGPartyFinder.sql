@@ -1,8 +1,8 @@
 CREATE TABLE `user` (
   `id` int unsigned PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(25),
-  `login` varchar(50),
-  `email` varchar(100),
+  `login` varchar(50) UNIQUE,
+  `email` varchar(100) UNIQUE,
   `password` varchar(200)
 );
 
