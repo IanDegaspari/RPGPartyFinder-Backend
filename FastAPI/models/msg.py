@@ -14,12 +14,12 @@ class Msg(Base):
 
     msg_id = Column(INTEGER, primary_key=True)
     content = Column(VARCHAR)
-    by = Column(INTEGER, ForeignKey=True)
+    by = Column(INTEGER)
     recipient_type = Column(TINYINT)
     Time = Column(DATETIME)
 
 class MsgTo(Base):
     __tablename__ = "msg_to"
 
-    msg_id = Column(INTEGER, ForeignKey=True)
-    to = Column(INTEGER, ForeignKey=True)
+    msg_id = Column(INTEGER, primary_key=True)
+    to = Column(INTEGER, primary_key=True)

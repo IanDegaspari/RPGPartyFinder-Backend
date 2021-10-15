@@ -25,7 +25,7 @@ class User(Base):
 class UserPreferences(Base):
     __tablename__ = "user_preferences"
 
-    user_id = Column(INTEGER)
+    user_id = Column(INTEGER, primary_key=True)
     gm = Column(TINYINT)
     systems = Column(VARCHAR)
     scenarios = Column(VARCHAR)
@@ -34,7 +34,7 @@ class UserPreferences(Base):
 class UserRelations(Base):
     __tablename__ = "user_relations"
 
-    user_0 = Column(INTEGER)
-    user_1 = Column(INTEGER)
+    user_0 = Column(INTEGER, primary_key=True)
+    user_1 = Column(INTEGER, primary_key=True)
     swipe_0 = Column(TINYINT)
     swipe_1 = Column(TINYINT)

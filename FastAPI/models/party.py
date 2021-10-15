@@ -18,6 +18,6 @@ class Party(Base):
 class PartyUsers(Base):
     __tablename__ = "party_users"
 
-    party_id = Column(INTEGER, ForeignKey=True)
-    user_id = Column(INTEGER, ForeignKey=True)
+    party_id = Column(INTEGER)
+    user_id = Column(INTEGER)
     role = Column(TINYINT)

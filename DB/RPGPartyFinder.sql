@@ -31,7 +31,8 @@ CREATE TABLE `party` (
 CREATE TABLE `party_users` (
   `party_id` int unsigned,
   `user_id` int unsigned,
-  `role` tinyint
+  `role` tinyint,
+  UNIQUE KEY `relation_id` (`party_id`, `user_id`)
 );
 
 CREATE TABLE `msg` (
@@ -43,7 +44,7 @@ CREATE TABLE `msg` (
 );
 
 CREATE TABLE `msg_to` (
-  `msg_id` int unsigned PRIMARY KEY,
+  `msg_id` int unsigned,
   `to` int unsigned
 );
 
