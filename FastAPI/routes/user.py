@@ -18,7 +18,7 @@ async def create_user(
     db: Session = Depends(get_db)
 ):
     #chamar função que salva o usuário no banco e retornar true ou false
-    return insert_user()
+    return insert_user(db, user)
 
 
 @user_router.post("/user/preferences")
