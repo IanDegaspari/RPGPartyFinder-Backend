@@ -47,7 +47,7 @@ def update_msg(db: Session, msg: MsgPost):
         db_msg = Msg(
             **msg.dict())
         
-        db.query(Msg).filter_by(msg_id=db_msg['msg_id']).update(db_msg)
+        db.query(Msg).filter_by(msg_id=db_msg.msg_id).update(db_msg)
         db.commit()
         status = True
     except Exception:

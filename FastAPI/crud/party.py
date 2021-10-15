@@ -45,7 +45,7 @@ def update_party(db: Session, party: PartyPost):
         db_party = Party(
             **party.dict())
         
-        db.query(Party).filter_by(party_id=db_party['party_id']).update(db_party)
+        db.query(Party).filter_by(party_id=db_party.party_id).update(db_party)
         db.commit()
         status = True
     except Exception:
