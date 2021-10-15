@@ -14,7 +14,7 @@ def insert_user(db: Session, user: UserPost):
     try:
         db_user = User(
             **user.dict())
-        db_user['password'] = sha256_crypt.hash(db_user['password'])
+        db_user.password = sha256_crypt.hash(db_user.password)
         db.add(db_user)
         db.commit()
         status = True
@@ -47,12 +47,12 @@ def update_user(db: Session, user: UserPost):
         db_user = User(
             **user.dict())
 
-        if db_user['password']:
-            db_user['password'] = sha256_crypt.hash(db_user['password'])
+        if db_user.password:
+            db_user.password = sha256_crypt.hash(db_user.password)
         else:
-            del db_user['password']
+            del db_user.password
         
-        db.query(User).filter_by(id=db_user['id']).update(db_user)
+        db.query(User).filter_by(id=db_user.id).update(db_user)
         db.commit()
         status = True
     except Exception:
