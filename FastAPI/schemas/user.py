@@ -53,3 +53,15 @@ class UserRelationsPost(BaseModel):
                 "swipe_1": False
             }
         }
+
+class Login(BaseModel):
+    login: str
+    password: str
+    class Config:
+        orm_mode = True
+        schema_extra = {
+            "example": {
+                "login": "carlos",
+                "password": "andre",
+                }
+        }
