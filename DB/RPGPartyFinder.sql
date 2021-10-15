@@ -7,7 +7,7 @@ CREATE TABLE `user` (
 );
 
 CREATE TABLE `user_preferences` (
-  `user_id` int unsigned,
+  `user_id` int unsigned PRIMARY KEY,
   `gm` tinyint,
   `systems` varchar(300),
   `scenarios` varchar(400),
@@ -43,7 +43,7 @@ CREATE TABLE `msg` (
 );
 
 CREATE TABLE `msg_to` (
-  `msg_id` int unsigned,
+  `msg_id` int unsigned PRIMARY KEY,
   `to` int unsigned
 );
 
