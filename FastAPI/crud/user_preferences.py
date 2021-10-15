@@ -1,9 +1,9 @@
-from sqlalchemy.orm import Session
 import os
 import sys
 from pathlib import Path
 sys.path.append(os.path.abspath(Path(os.getcwd()) / ".." ))
 import logging
+from sqlalchemy.orm import Session
 from schemas.user import UserPreferencesPost
 from database.database import engine
 from models.user import UserPreferences
@@ -32,7 +32,7 @@ def get_user_preferences(db: Session, user_id: int or None):
             results = db.query(UserPreferences).all()
         status = True
     except Exception:
-        logging.exception("ErrorInsertingData")
+        logging.exception("ErrorGettingData")
         status = False
     finally:
         return {
@@ -48,7 +48,7 @@ def update_user_preferences(db: Session, user_pref: UserPreferencesPost):
         db.commit()
         status = True
     except Exception:
-        logging.exception("ErrorInsertingData")
+        logging.exception("ErrorUpdatingData")
         status = False
     finally:
         return {
@@ -61,7 +61,7 @@ def delete_user_preferences(db: Session, user_id: int):
         db.commit()
         status = True
     except Exception:
-        logging.exception("ErrorInsertingData")
+        logging.exception("ErrorDeletingData")
         status = False
     finally:
         return {
