@@ -4,18 +4,16 @@ from pathlib import Path
 sys.path.append(os.path.abspath(Path(os.getcwd()) / ".." ))
 import logging
 from sqlalchemy.orm import Session
-from passlib.hash import sha256_crypt
-from schemas.user import UserPost
+from schemas.party import PartyUsersPost
 from database.database import engine
-from models.user import User
+from models.party import PartyUsers
 
 
-def insert_user(db: Session, user: UserPost):
+def insert_party_users(db: Session, party_users: PartyUsersPost):
     try:
-        db_user = User(
-            **user.dict())
-        db_user['password'] = sha256_crypt.hash(db_user['password'])
-        db.add(db_user)
+        db_party_users = PartyUsers(
+            **party_users.dict())
+        db.add(db_party_users)
         db.commit()
         status = True
     except Exception:
@@ -26,33 +24,28 @@ def insert_user(db: Session, user: UserPost):
             "status": status
         }
 
-def get_user(db: Session, user_id: int or None):
+def get_party_users(db: Session, party_id: int or None):
     results = []
     try:
-        if user_id is not None:
-            results = [db.query(User).filter_by(id=user_id).first()]
+        if party_id is not None:
+            results = db.query(PartyUsers).filter_by(party_id=party_id).all()
         else:
-            results = db.query(User).all()
+            results = db.query(PartyUsers).all()
         status = True
     except Exception:
-        logging.exception("ErrorGettingData")
+        logging.exception("ErrorInsertingData")
         status = False
     finally:
         return {
             "status": status, "results": results
         }
 
-def update_user(db: Session, user: UserPost):
+def update_party_users(db: Session, party_users: PartyUsersPost):
     try:
-        db_user = User(
-            **user.dict())
-
-        if db_user['password']:
-            db_user['password'] = sha256_crypt.hash(db_user['password'])
-        else:
-            del db_user['password']
+        db_party_users = PartyUsers(
+            **party_users.dict())
         
-        db.query(User).filter_by(id=db_user['id']).update(db_user)
+        db.query(PartyUsers).filter_by(party_id=db_party_users['party_id']).update(db_party_users)
         db.commit()
         status = True
     except Exception:
@@ -63,9 +56,9 @@ def update_user(db: Session, user: UserPost):
             "status": status
         }
 
-def delete_user(db: Session, user_id: int):
+def delete_party_users(db: Session, party_id: int):
     try:
-        db.query(User).filter_by(id=user_id).delete()
+        db.query(PartyUsers).filter_by(party_id=party_id).delete()
         db.commit()
         status = True
     except Exception:

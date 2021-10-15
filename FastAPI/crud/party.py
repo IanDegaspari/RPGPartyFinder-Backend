@@ -4,18 +4,16 @@ from pathlib import Path
 sys.path.append(os.path.abspath(Path(os.getcwd()) / ".." ))
 import logging
 from sqlalchemy.orm import Session
-from passlib.hash import sha256_crypt
-from schemas.user import UserPost
+from schemas.party import PartyPost
 from database.database import engine
-from models.user import User
+from models.party import Party
 
 
-def insert_user(db: Session, user: UserPost):
+def insert_party(db: Session, party: PartyPost):
     try:
-        db_user = User(
-            **user.dict())
-        db_user['password'] = sha256_crypt.hash(db_user['password'])
-        db.add(db_user)
+        db_party = Party(
+            **party.dict())
+        db.add(db_party)
         db.commit()
         status = True
     except Exception:
@@ -26,13 +24,13 @@ def insert_user(db: Session, user: UserPost):
             "status": status
         }
 
-def get_user(db: Session, user_id: int or None):
+def get_party(db: Session, party_id: int or None):
     results = []
     try:
-        if user_id is not None:
-            results = [db.query(User).filter_by(id=user_id).first()]
+        if party_id is not None:
+            results = [db.query(Party).filter_by(party_id=party_id).first()]
         else:
-            results = db.query(User).all()
+            results = db.query(Party).all()
         status = True
     except Exception:
         logging.exception("ErrorGettingData")
@@ -42,17 +40,12 @@ def get_user(db: Session, user_id: int or None):
             "status": status, "results": results
         }
 
-def update_user(db: Session, user: UserPost):
+def update_party(db: Session, party: PartyPost):
     try:
-        db_user = User(
-            **user.dict())
-
-        if db_user['password']:
-            db_user['password'] = sha256_crypt.hash(db_user['password'])
-        else:
-            del db_user['password']
+        db_party = Party(
+            **party.dict())
         
-        db.query(User).filter_by(id=db_user['id']).update(db_user)
+        db.query(Party).filter_by(party_id=db_party['party_id']).update(db_party)
         db.commit()
         status = True
     except Exception:
@@ -63,9 +56,9 @@ def update_user(db: Session, user: UserPost):
             "status": status
         }
 
-def delete_user(db: Session, user_id: int):
+def delete_party(db: Session, party_id: int):
     try:
-        db.query(User).filter_by(id=user_id).delete()
+        db.query(Party).filter_by(party_id=party_id).delete()
         db.commit()
         status = True
     except Exception:
