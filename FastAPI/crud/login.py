@@ -40,7 +40,8 @@ async def retrieve_usernames(db: Session, username):
     """Função chamada pela rota post login, retorna o login de um user"""
     try:
         users = db.query(User.login).filter_by(login=username).one()
-        return users#.fetchone()
+        print(users[0])
+        return users[0]#.fetchone()
     except Exception:
         logging.exception("ErrorRetrieveUsernames")
         return {}
@@ -50,7 +51,8 @@ async def retrieve_password(db: Session, username):
     """Função chamada pela rota post login, retorna a senha de um user"""
     try:
         users = db.query(User.password).filter_by(login=username).one()
-        return users#.fetchall()[0].password
+        print(users[0])
+        return users[0]
     except Exception:
         logging.exception("ErrorRetrievePassword")
         return {}
@@ -87,6 +89,7 @@ async def authenticate_user(
     username: str, password: str, db: Session = Depends(get_db)
 ):
     """verifica se o usuario é valido"""
+    print(password)
     user = await retrieve_usernames(db, username)
     if not user:
         return False

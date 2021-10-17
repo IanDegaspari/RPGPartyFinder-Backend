@@ -26,7 +26,7 @@ async def login_for_access_token(
     """realiza o login do usuario"""
     data = ""
     # autentica
-    user = await login.authenticate_user(inputdata.login, inputdata.password)
+    user = await login.authenticate_user(inputdata.login, inputdata.password, db)
     # retorna errro
     if not user:
         response.status_code = fastapi_status.HTTP_401_UNAUTHORIZED
