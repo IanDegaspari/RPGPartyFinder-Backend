@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 from sqlalchemy.orm import Session
 sys.path.append(os.path.abspath(Path(os.getcwd()) / ".." ))
+from crud.user_preferences import insert_user_preferences
 from schemas.user import UserPost, UserPreferencesPost, UserRelationsPost
 from crud.user import insert_user
 from database.database import get_db
@@ -28,7 +29,7 @@ async def create_user_preferences(
     db: Session = Depends(get_db)
 ):
     #chamar função que salva o usuário no banco e retornar true ou false
-    return True
+    return insert_user_preferences(db, user)
 
 @user_router.post("/user/relations")
 async def create_user_relations(

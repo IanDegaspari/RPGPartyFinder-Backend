@@ -11,6 +11,7 @@ from models.user import User
 
 
 def insert_user(db: Session, user: UserPost):
+    id = ""
     try:
         db_user = User(
             **user.dict())
@@ -18,12 +19,15 @@ def insert_user(db: Session, user: UserPost):
         db.add(db_user)
         db.commit()
         status = True
+        id_temp = db.query(User.id).filter_by(login=user.login).first()
+        id = id_temp.id
     except Exception:
         logging.exception("ErrorInsertingData")
         status = False
     finally:
         return {
-            "status": status
+            "status": status,
+            "id": id
         }
 
 def get_user(db: Session, user_id: int or None):

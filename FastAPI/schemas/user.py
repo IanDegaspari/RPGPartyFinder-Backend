@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional
+from typing import List, Optional
 
 class UserPost(BaseModel):
     email: EmailStr
@@ -20,9 +20,9 @@ class UserPost(BaseModel):
 
 class UserPreferencesPost(BaseModel):
     user_id: int
-    gm: bool
-    systems: str
-    scenarios: str
+    gm: int
+    systems: List
+    scenarios: List
     desc: str
     
     class Config:
@@ -30,7 +30,7 @@ class UserPreferencesPost(BaseModel):
         schema_extra = {
             "example": {
                 "user_id": 1,
-                "gm": True,
+                "gm": 0,
                 "systems": "Tormenta",
                 "scenarios": "Medieval",
                 "desc": "Nerdola"
