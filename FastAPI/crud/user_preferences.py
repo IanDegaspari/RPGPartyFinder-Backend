@@ -10,7 +10,10 @@ from models.user import UserPreferences
 
 def insert_user_preferences(db: Session, user_pref: UserPreferencesPost):
     try:
-        
+        if user_pref.systems == "|":
+            user_pref.systems = ""
+        if user_pref.scenarios == "|":
+            user_pref.scenarios = ""
         db_userp = UserPreferences(
             user_id=user_pref.user_id, gm=user_pref.gm, desc=user_pref.desc, scenarios=user_pref.scenarios, systems=user_pref.systems)
         db.add(db_userp)
