@@ -10,14 +10,9 @@ from models.user import UserPreferences
 
 def insert_user_preferences(db: Session, user_pref: UserPreferencesPost):
     try:
-        systens = ""
-        scenarios = ""
-        for system in user_pref.systems:
-            systens = systens + system + "|"
-        for scenario in user_pref.scenarios:
-            scenarios = systens + scenario + "|"
+        
         db_userp = UserPreferences(
-            user_id=user_pref.user_id, gm=user_pref.gm, desc=user_pref.desc, scenarios=scenarios, systems=systens)
+            user_id=user_pref.user_id, gm=user_pref.gm, desc=user_pref.desc, scenarios=user_pref.scenarios, systems=user_pref.systems)
         db.add(db_userp)
         db.commit()
         status = True
