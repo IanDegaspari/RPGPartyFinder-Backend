@@ -50,11 +50,9 @@ def update_user(db: Session, user: UserPost):
     try:
         db_user = User(
             **user.dict())
-
-        if db_user.password:
-            db_user.password = sha256_crypt.hash(db_user.password)
-        else:
-            del db_user.password
+        
+        old_user_passw = db.query(User.password).filter_by(id=db_user.id).first()
+        db_user.password = old_user_passw
         
         db.query(User).filter_by(id=db_user.id).update(db_user)
         db.commit()
