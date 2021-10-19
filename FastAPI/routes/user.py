@@ -1,4 +1,6 @@
-from fastapi import FastAPI, APIRouter, Depends
+from fastapi import FastAPI, APIRouter, Depends, File
+from fastapi.datastructures import UploadFile
+from fastapi.param_functions import Form
 from starlette.responses import Response
 import os
 import sys
@@ -9,6 +11,9 @@ from crud.user_preferences import insert_user_preferences
 from schemas.user import UserPost, UserPreferencesPost, UserRelationsPost
 from crud.user import insert_user
 from database.database import get_db
+from PIL import Image
+import cv2
+from typing import List, Optional
 
 user_router = APIRouter()
 
@@ -25,10 +30,23 @@ async def create_user(
 @user_router.post("/user/preferences")
 async def create_user_preferences(
     response: Response,
-    user: UserPreferencesPost,
+    user_id: int = Form(...),
+    gm: int = Form(...),
+    systems: str = Form(...),
+    scenarios: str = Form(...),
+    desc: str = Form(...),
+    image: Optional[UploadFile] = File(...),
     db: Session = Depends(get_db)
 ):
     #chamar função que salva o usuário no banco e retornar true ou false
+    user = UserPreferencesPost
+    user.user_id = user_id
+    user.gm = gm
+    user.systems = systems
+    user.scenarios = scenarios
+    user.desc = desc
+    with open(Path(f"pictures/{user_id}.jpg"), "wb") as qualquer:
+        qualquer.write(image.file.read())
     return insert_user_preferences(db, user)
 
 @user_router.post("/user/relations")
