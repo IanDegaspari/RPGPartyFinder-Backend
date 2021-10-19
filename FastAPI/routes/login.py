@@ -12,10 +12,15 @@ from sqlalchemy.orm import Session
 import os
 import sys
 from pathlib import Path
+
+from sqlalchemy.sql.expression import null, true
 sys.path.append(os.path.abspath(Path(os.getcwd()) / ".." ))
 from schemas.user import Login
 from database.database import get_db
 from crud import login
+import io
+from starlette.responses import StreamingResponse
+import cv2
 
 login_router = APIRouter()
 
@@ -36,7 +41,7 @@ async def login_for_access_token(
             "id": "",
             "login": "Invalid input",
             "name": "",
-            "email": "",
+            "email": ""
         }
     else:
         response.status_code = fastapi_status.HTTP_202_ACCEPTED
@@ -56,7 +61,7 @@ async def login_for_access_token(
                 "id": data.id,
                 "login": user,
                 "name": data.name,
-                "email": data.email
+                "email": data.email,
             }
         else:
             token_data = {
@@ -68,3 +73,10 @@ async def login_for_access_token(
                 "email": ""
             }
     return token_data
+
+@login_router.get("/image/")
+async def return_img(id: int):
+    #user = login.get_current_user_from_token(token)
+    img = cv2.imread(str(Path((f"pictures/{id}.jpg"))))
+    res, im_png = cv2.imencode(".jpg", img)
+    return StreamingResponse(io.BytesIO(im_png.tobytes()), media_type="image/jpg")

@@ -45,8 +45,8 @@ async def create_user_preferences(
     user.systems = systems
     user.scenarios = scenarios
     user.desc = desc
-    with open(Path(f"pictures/{user_id}.jpg"), "wb") as qualquer:
-        qualquer.write(image.file.read())
+    with open(Path(f"pictures/{user_id}.jpg"), "wb") as img:
+        img.write(image.file.read())
     return insert_user_preferences(db, user)
 
 @user_router.post("/user/relations")
