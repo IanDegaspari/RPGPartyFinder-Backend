@@ -16,8 +16,8 @@ from pathlib import Path
 
 from sqlalchemy.sql.expression import null, true
 from sqlalchemy.sql.functions import user
-from FastAPI.crud.user_preferences import get_user_preferences
 sys.path.append(os.path.abspath(Path(os.getcwd()) / ".." ))
+from crud.user_preferences import get_user_preferences
 from schemas.user import Login
 from database.database import get_db
 from crud import login, user_preferences
