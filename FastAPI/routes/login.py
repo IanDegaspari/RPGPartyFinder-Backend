@@ -8,13 +8,14 @@ from fastapi import (
 )
 from datetime import timedelta
 from sqlalchemy.orm import Session
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordRequestForm
 
 import os
 import sys
 from pathlib import Path
 
 from sqlalchemy.sql.expression import null, true
+from sqlalchemy.sql.functions import user
 sys.path.append(os.path.abspath(Path(os.getcwd()) / ".." ))
 from schemas.user import Login
 from database.database import get_db
@@ -28,7 +29,7 @@ login_router = APIRouter()
 
 @login_router.post("/token")
 async def login_for_access_token(
-    response: Response, inputdata: OAuth2PasswordBearer = Depends(), db: Session = Depends(get_db)
+    response: Response, inputdata: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
 ):
     """realiza o login do usuario"""
     data = ""
@@ -128,8 +129,9 @@ async def login_for_access_token(
     return token_data
 
 @login_router.get("/image/")
-async def return_img(id: int):
-    #user = login.get_current_user_from_token(token)
-    img = cv2.imread(str(Path((f"pictures/{id}.jpg"))))
+async def return_img(token: str = Depends(login.oauth2_scheme), db: Session = Depends(get_db)):
+    lg = await login.get_current_user_from_token(token)
+    user = await login.retrieve_login_information(db, lg)
+    img = cv2.imread(str(Path((f"pictures/{user.id}.jpg"))))
     res, im_png = cv2.imencode(".jpg", img)
     return StreamingResponse(io.BytesIO(im_png.tobytes()), media_type="image/jpg")

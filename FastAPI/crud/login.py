@@ -39,9 +39,9 @@ class TokenData(BaseModel):
 async def retrieve_usernames(db: Session, username):
     """Função chamada pela rota post login, retorna o login de um user"""
     try:
-        users = db.query(User.login).filter_by(login=username).one()
-        print(users[0])
-        return users[0]#.fetchone()
+        users = engine.execute(f"SELECT login FROM user WHERE login = '{username}'").fetchone()
+        print(users)
+        return users.login#.fetchone()
     except Exception:
         logging.exception("ErrorRetrieveUsernames")
         return {}
@@ -50,9 +50,10 @@ async def retrieve_usernames(db: Session, username):
 async def retrieve_password(db: Session, username):
     """Função chamada pela rota post login, retorna a senha de um user"""
     try:
-        users = db.query(User.password).filter_by(login=username).one()
-        print(users[0])
-        return users[0]
+        users = engine.execute(f"SELECT password FROM user WHERE login = '{username}'").fetchone()
+        #db.query(User.password).filter_by(login=username).one()
+        print(users)
+        return users.password
     except Exception:
         logging.exception("ErrorRetrievePassword")
         return {}
@@ -149,4 +150,6 @@ async def retrieve_login_information(db: Session, user):
         logging.exception("ErrorGettingLoginData")
     finally:
       return data
+
+      
 
