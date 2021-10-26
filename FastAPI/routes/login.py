@@ -15,10 +15,11 @@ import sys
 from pathlib import Path
 
 from sqlalchemy.sql.expression import null, true
+from FastAPI.crud.user_preferences import get_user_preferences
 sys.path.append(os.path.abspath(Path(os.getcwd()) / ".." ))
 from schemas.user import Login
 from database.database import get_db
-from crud import login
+from crud import login, user_preferences
 import io
 from starlette.responses import StreamingResponse
 import cv2
@@ -34,7 +35,7 @@ async def login_for_access_token(
     data = ""
     # autentica
     user = await login.authenticate_user(inputdata.username, inputdata.password, db)
-    # retorna errro
+    # retorna erro
     if not user:
         response.status_code = fastapi_status.HTTP_401_UNAUTHORIZED
         return {
@@ -43,7 +44,8 @@ async def login_for_access_token(
             "id": "",
             "login": "Invalid input",
             "name": "",
-            "email": ""
+            "email": "",
+            "preferences": {}
         }
     else:
         response.status_code = fastapi_status.HTTP_202_ACCEPTED
@@ -57,6 +59,13 @@ async def login_for_access_token(
         data = await login.retrieve_login_information(db, user)
         # retorna o TOKEN gerado e um header falando q eh um bearer
         if data:
+            preferences = {}
+            results = get_user_preferences(db, data.id)
+            if results['status']:
+                preferences['gm'] = results['results'][0].gm
+                preferences['systems'] = results['results'][0].systems
+                preferences['scenarios'] = results['results'][0].scenarios
+                preferences['desc'] = results['results'][0].desc
             token_data = {
                 "access_token": access_token,
                 "token_type": "bearer",
@@ -64,6 +73,7 @@ async def login_for_access_token(
                 "login": user,
                 "name": data.name,
                 "email": data.email,
+                "preferences": preferences
             }
         else:
             token_data = {
@@ -72,7 +82,8 @@ async def login_for_access_token(
                 "id": "",
                 "login": "",
                 "name": "",
-                "email": ""
+                "email": "",
+                "preferences": {}
             }
     return token_data
 
