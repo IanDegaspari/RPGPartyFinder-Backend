@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 sys.path.append(os.path.abspath(Path(os.getcwd()) / ".." ))
 from crud.user_preferences import insert_user_preferences
 from schemas.user import UserPost, UserPreferencesPost, UserRelationsPost
-from crud.user import insert_user
+from crud.user import insert_user, get_user
 from database.database import get_db
 from PIL import Image
 import cv2
@@ -26,6 +26,9 @@ async def create_user(
     #chamar função que salva o usuário no banco e retornar true ou false
     return insert_user(db, user)
 
+@user_router.get("/user/{id}")
+async def get_users(id: int or None, response: Response, db: Session = Depends(get_db)):
+    return get_user(db, id)
 
 @user_router.post("/user/preferences")
 async def create_user_preferences(
