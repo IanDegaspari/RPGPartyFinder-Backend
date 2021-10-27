@@ -61,7 +61,7 @@ async def login_for_access_token(
         if data:
             preferences = {}
             results = user_preferences.get_user_preferences(db, data.id)
-            if results['status']:
+            if results['status'] and results['results'][0] is not None:
                 preferences['gm'] = results['results'][0].gm
                 preferences['systems'] = results['results'][0].systems
                 preferences['scenarios'] = results['results'][0].scenarios
@@ -149,14 +149,14 @@ async def login_for_access_token(
 
 @login_router.get("/image/")
 async def return_img(token: str = Depends(login.oauth2_scheme), db: Session = Depends(get_db)):
-    imgs_path = Path(f"pictures/user/{id}.jpg")
     lg = await login.get_current_user_from_token(token)
     user = await login.retrieve_login_information(db, lg)
+    imgs_path = Path(f"pictures/user/{user.id}.png")
     if not os.path.isfile(imgs_path):
-        rh = Robohash(str(id))
+        rh = Robohash(str(user.id))
         rh.assemble(roboset="any")
         with open(imgs_path, 'wb') as f:
             rh.img.save(f, format="png")
-    img = cv2.imread(str(Path((f"pictures/{user.id}.jpg"))))
-    res, im_png = cv2.imencode(".jpg", img)
-    return StreamingResponse(io.BytesIO(im_png.tobytes()), media_type="image/jpg")
+    img = cv2.imread(str(imgs_path))
+    res, im_png = cv2.imencode(".png", img)
+    return StreamingResponse(io.BytesIO(im_png.tobytes()), media_type="image/png")
