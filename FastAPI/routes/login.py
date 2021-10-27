@@ -15,7 +15,6 @@ import sys
 from pathlib import Path
 
 from sqlalchemy.sql.expression import null, true
-from FastAPI.crud.user_preferences import get_user_preferences
 sys.path.append(os.path.abspath(Path(os.getcwd()) / ".." ))
 from schemas.user import Login
 from database.database import get_db
@@ -23,6 +22,8 @@ from crud import login, user_preferences
 import io
 from starlette.responses import StreamingResponse
 import cv2
+import time
+from robohash import Robohash
 
 login_router = APIRouter()
 
@@ -60,7 +61,7 @@ async def login_for_access_token(
         # retorna o TOKEN gerado e um header falando q eh um bearer
         if data:
             preferences = {}
-            results = get_user_preferences(db, data.id)
+            results = user_preferences.get_user_preferences(db, data.id)
             if results['status']:
                 preferences['gm'] = results['results'][0].gm
                 preferences['systems'] = results['results'][0].systems
@@ -141,6 +142,12 @@ async def login_for_access_token(
 @login_router.get("/image/")
 async def return_img(id: int):
     #user = login.get_current_user_from_token(token)
-    img = cv2.imread(str(Path((f"pictures/{id}.jpg"))))
+    imgs_path = Path(f"pictures/user/{id}.jpg")
+    if not os.path.isfile(imgs_path):
+        rh = Robohash(str(id))
+        rh.assemble(roboset="any")
+        with open(imgs_path, 'wb') as f:
+            rh.img.save(f, format="png")
+    img = cv2.imread(str(imgs_path))
     res, im_png = cv2.imencode(".jpg", img)
     return StreamingResponse(io.BytesIO(im_png.tobytes()), media_type="image/jpg")
