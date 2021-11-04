@@ -23,6 +23,7 @@ import io
 from starlette.responses import StreamingResponse
 import cv2
 from robohash import Robohash
+from time import time
 
 login_router = APIRouter()
 
@@ -153,8 +154,16 @@ async def return_img(token: str = Depends(login.oauth2_scheme), db: Session = De
     user = await login.retrieve_login_information(db, lg)
     imgs_path = Path(f"pictures/user/{user.id}.png")
     if not os.path.isfile(imgs_path):
-        rh = Robohash(str(user.id))
-        rh.assemble(roboset="any")
+        robot_assembled = False
+        while not robot_assembled:
+            try:
+                rh = Robohash(str(user.id))
+                rh.assemble(roboset="any")
+                robot_assembled = True
+            except:
+                rh = Robohash(str(user.id) + str(time()))
+                rh.assemble(roboset="any")
+                robot_assembled = True
         with open(imgs_path, 'wb') as f:
             rh.img.save(f, format="png")
     img = cv2.imread(str(imgs_path))

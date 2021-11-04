@@ -13,7 +13,7 @@ class UserPost(BaseModel):
             "example": {
                 "email": "andre@gmail.com",
                 "name": "andre",
-                "password": "carlosgostoso",
+                "password": "senhapadrao",
                 "login": "andresrib"
             }
         }
