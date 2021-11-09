@@ -35,7 +35,7 @@ async def create_user_preferences(
     user.systems = systems
     user.scenarios = scenarios
     user.desc = desc
-    with open(Path(f"pictures/users/{user_id}.png"), "wb") as img:
+    with open(Path(f"pictures/user/{user_id}.png"), "wb") as img:
         img.write(image.file.read())
     return insert_user_preferences(db, user)
 
