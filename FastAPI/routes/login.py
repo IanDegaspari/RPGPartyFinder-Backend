@@ -120,13 +120,6 @@ async def login_for_access_token(
         data = await login.retrieve_login_information(db, user)
         # retorna o TOKEN gerado e um header falando q eh um bearer
         if data:
-            preferences = {}
-            results = get_user_preferences(db, data.id)
-            if results['status']:
-                preferences['gm'] = results['results'][0].gm
-                preferences['systems'] = results['results'][0].systems
-                preferences['scenarios'] = results['results'][0].scenarios
-                preferences['desc'] = results['results'][0].desc
             token_data = {
                 "access_token": access_token,
                 "token_type": "bearer",
@@ -134,7 +127,6 @@ async def login_for_access_token(
                 "login": user,
                 "name": data.name,
                 "email": data.email,
-                "preferences": preferences
             }
         else:
             token_data = {
@@ -144,7 +136,6 @@ async def login_for_access_token(
                 "login": "",
                 "name": "",
                 "email": "",
-                "preferences": {}
             }
     return token_data
 

@@ -1,4 +1,3 @@
-from re import I
 from fastapi import FastAPI, APIRouter, Depends, File
 from fastapi.datastructures import UploadFile
 from fastapi.param_functions import Form
