@@ -1,33 +1,61 @@
 import os
 import sys
 from pathlib import Path
+
+from sqlalchemy.sql.expression import true
+
 sys.path.append(os.path.abspath(Path(os.getcwd()) / ".." ))
 import logging
+from sqlalchemy import exc
 from sqlalchemy.orm import Session
 from passlib.hash import sha256_crypt
 from schemas.user import UserPost
 from database.database import engine
 from models.user import User
-
+import logging
 
 def insert_user(db: Session, user: UserPost):
     id = ""
+    error = ""
+    status = ""
+    usernames = db.query(User.login).all()
+    treatedUsernames = []
+    treatedEmails = []
+    for username in usernames:
+        treatedUsernames.append(username[0])
+    emails = db.query(User.email).all()
+    for email in emails:
+        treatedEmails.append(email[0])
     try:
+        print("a")
         db_user = User(
             **user.dict())
         db_user.password = sha256_crypt.hash(db_user.password)
         db.add(db_user)
         db.commit()
+        print("b")
         status = True
+        print("c")
         id_temp = db.query(User.id).filter_by(login=user.login).first()
         id = id_temp.id
     except Exception:
-        logging.exception("ErrorInsertingData")
         status = False
+        logging.exception("ErrorInsertingData")
+        if user.email in treatedEmails and user.login in treatedUsernames:
+            print(0)
+            error = 0
+        elif user.email in treatedEmails:
+            print(1)
+            error = 1
+        elif user.login in treatedUsernames:
+            print(2)
+            error = 2
     finally:
+        print(id)
         return {
             "status": status,
-            "id": id
+            "id": id,
+            "error": error
         }
 
 def get_user(db: Session, user_id: int or None):

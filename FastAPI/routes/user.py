@@ -1,4 +1,5 @@
-from fastapi import FastAPI, APIRouter, Depends, File
+from datetime import date
+from fastapi import FastAPI, APIRouter, Depends, File, status as fastapi_status
 from fastapi.datastructures import UploadFile
 from fastapi.param_functions import Form
 from starlette.responses import Response
@@ -25,7 +26,8 @@ async def create_user(
     db: Session = Depends(get_db)
 ):
     #chamar função que salva o usuário no banco e retornar true ou false
-    return insert_user(db, user)
+    data = insert_user(db, user)
+    return data
 
 @user_router.get("/user/{id}")
 async def get_users(id: int or None, response: Response, db: Session = Depends(get_db)):
