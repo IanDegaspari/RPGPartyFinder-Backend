@@ -21,8 +21,8 @@ class UserPost(BaseModel):
 class UserPreferencesPost(BaseModel):
     user_id: int
     gm: int
-    systems: List
-    scenarios: List
+    systems: str
+    scenarios: str
     desc: str
     
     class Config:
