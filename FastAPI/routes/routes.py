@@ -10,8 +10,6 @@ from routes.user_relations import relations_router
 
 app = FastAPI()
 
-print(os.getcwd())
-
 @app.get("/")
 async def root():
     return {"message": "Hello World"}

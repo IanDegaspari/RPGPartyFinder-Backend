@@ -40,7 +40,6 @@ async def retrieve_usernames(db: Session, username):
     """Função chamada pela rota post login, retorna o login de um user"""
     try:
         users = engine.execute(f"SELECT login FROM user WHERE login = '{username}'").fetchone()
-        print(users)
         return users.login#.fetchone()
     except Exception:
         logging.exception("ErrorRetrieveUsernames")
@@ -52,7 +51,6 @@ async def retrieve_password(db: Session, username):
     try:
         users = engine.execute(f"SELECT password FROM user WHERE login = '{username}'").fetchone()
         #db.query(User.password).filter_by(login=username).one()
-        print(users)
         return users.password
     except Exception:
         logging.exception("ErrorRetrievePassword")
@@ -90,7 +88,6 @@ async def authenticate_user(
     username: str, password: str, db: Session = Depends(get_db)
 ):
     """verifica se o usuario é valido"""
-    print(password)
     user = await retrieve_usernames(db, username)
     if not user:
         return False

@@ -27,31 +27,24 @@ def insert_user(db: Session, user: UserPost):
     for email in emails:
         treatedEmails.append(email[0])
     try:
-        print("a")
         db_user = User(
             **user.dict())
         db_user.password = sha256_crypt.hash(db_user.password)
         db.add(db_user)
         db.commit()
-        print("b")
         status = True
-        print("c")
         id_temp = db.query(User.id).filter_by(login=user.login).first()
         id = id_temp.id
     except Exception:
         status = False
         logging.exception("ErrorInsertingData")
         if user.email in treatedEmails and user.login in treatedUsernames:
-            print(0)
             error = 0
         elif user.email in treatedEmails:
-            print(1)
             error = 1
         elif user.login in treatedUsernames:
-            print(2)
             error = 2
     finally:
-        print(id)
         return {
             "status": status,
             "id": id,
@@ -107,9 +100,7 @@ def delete_user(db: Session, user_id: int):
         }
 
 def update_password(db: Session, user_id: int, password: str):
-    print(password)
     password = sha256_crypt.hash(password)
-    print(password)
     try:
         db.query(User).filter_by(id=user_id).update({'password': password})
         db.commit()

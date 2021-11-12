@@ -47,7 +47,6 @@ def get_user_preferences(db: Session, user_id: int or None):
 
 def update_user_preferences(db: Session, user_pref: UserPreferencesPost):
     try:
-        print(user_pref.scenarios)
         db.query(UserPreferences).filter_by(user_id=user_pref.user_id).update({'desc': user_pref.desc, 'gm': user_pref.gm, 'systems': user_pref.systems, 'scenarios': user_pref.scenarios})
         db.commit()
         status = True
