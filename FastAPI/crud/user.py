@@ -112,6 +112,7 @@ def update_password(db: Session, user_id: int, password: str):
     print(password)
     try:
         db.query(User).filter_by(id=user_id).update({'password': password})
+        db.commit()
         status = true
     except:
         status = false
