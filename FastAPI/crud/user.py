@@ -2,7 +2,7 @@ import os
 import sys
 from pathlib import Path
 
-from sqlalchemy.sql.expression import true
+from sqlalchemy.sql.expression import false, true
 
 sys.path.append(os.path.abspath(Path(os.getcwd()) / ".." ))
 import logging
@@ -105,3 +105,14 @@ def delete_user(db: Session, user_id: int):
         return {
             "status": status
         }
+
+def update_password(db: Session, user_id: int, password: str):
+    print(password)
+    password = sha256_crypt.hash(password)
+    print(password)
+    try:
+        db.query(User).filter_by(id=user_id).update({'password': password})
+        status = true
+    except:
+        status = false
+    return {"status": status}

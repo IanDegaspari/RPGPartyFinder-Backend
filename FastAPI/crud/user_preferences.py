@@ -1,6 +1,8 @@
 import os
 import sys
 from pathlib import Path
+
+from sqlalchemy.sql.expression import desc, true
 sys.path.append(os.path.abspath(Path(os.getcwd()) / ".." ))
 import logging
 from sqlalchemy.orm import Session
@@ -45,10 +47,8 @@ def get_user_preferences(db: Session, user_id: int or None):
 
 def update_user_preferences(db: Session, user_pref: UserPreferencesPost):
     try:
-        db_userp = UserPreferences(
-            **user_pref.dict())
-
-        db.query(UserPreferences).filter_by(user_id=db_userp['user_id']).update(db_userp)
+        print(user_pref.scenarios)
+        db.query(UserPreferences).filter_by(user_id=user_pref.user_id).update({'desc': user_pref.desc, 'gm': user_pref.gm, 'systems': user_pref.systems, 'scenarios': user_pref.scenarios})
         db.commit()
         status = True
     except Exception:

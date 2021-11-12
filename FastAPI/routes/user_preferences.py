@@ -1,6 +1,7 @@
 from fastapi import FastAPI, APIRouter, Depends, File
 from fastapi.datastructures import UploadFile
 from fastapi.param_functions import Form
+from sqlalchemy.sql.expression import false, true
 from starlette.responses import Response
 import os
 import sys
@@ -13,7 +14,7 @@ from database.database import get_db
 from PIL import Image
 import cv2
 from typing import List, Optional
-from crud.login import oauth2_scheme
+from crud.login import oauth2_scheme, get_current_user_from_token, retrieve_login_information
 
 pref_router = APIRouter()
 
@@ -50,3 +51,15 @@ async def put_prefs(user: UserPreferencesPost, db: Session = Depends(get_db), to
 @pref_router.delete("/user/preferences")
 async def delete_prefs(id: int, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     return delete_user_preferences(db, id)
+
+@pref_router.put("/user/image")
+async def put_image(image: UploadFile = File(...), token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    lg = await get_current_user_from_token(token)
+    user = await retrieve_login_information(db, lg)
+    try:
+        with open(Path(f"pictures/user/{user.id}.png"), "wb") as img:
+            img.write(image.file.read())
+            status = true
+    except:
+        status = false
+    return {"status": status}
