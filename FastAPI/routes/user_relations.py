@@ -10,7 +10,7 @@ sys.path.append(os.path.abspath(Path(os.getcwd()) / ".." ))
 from crud.user_relations import insert_user_relations, update_user_relations, get_user_relations, delete_user_relations
 from schemas.user import UserPost, UserPreferencesPost, UserRelationsPost
 from database.database import get_db
-from crud.login import oauth2_scheme
+from crud.login import oauth2_scheme, get_current_user_from_token, retrieve_login_information
 
 relations_router = APIRouter()
 
@@ -24,13 +24,16 @@ async def create_user_relations(
     return True
 
 @relations_router.get("/user/relations/{id0}/{id1}")
-async def get_rel(id0: int or None, id1: int or None, response: Response, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
-    return get_user_relations(db, id0, id1)
+async def get_rel(response: Response, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+    return get_user_relations(db, None, None)
 
 @relations_router.put("/user/relations")
 async def put_rel(relation: UserRelationsPost, response: Response, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
-    return update_user_relations(db, relation)
+    lg = await get_current_user_from_token(token)
+    user = await retrieve_login_information(db, lg)
+    return update_user_relations(db, relation, user.id)
 
 @relations_router.delete("/user/relations")
 async def delete_rel(id0, id1, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     return delete_user_relations(db, id0, id1) 
+

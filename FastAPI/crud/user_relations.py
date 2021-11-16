@@ -1,6 +1,9 @@
 import os
 import sys
 from pathlib import Path
+
+from sqlalchemy.sql.elements import Null
+
 sys.path.append(os.path.abspath(Path(os.getcwd()) / ".." ))
 import logging
 from sqlalchemy.orm import Session
@@ -26,6 +29,8 @@ def insert_user_relations(db: Session, user_relations: UserRelationsPost):
 def get_user_relations(db: Session, user_id_0: int or None, user_id_1: int or None):
     results = []
     try:
+        db.query(UserRelations).update({"swipe_0": -1})
+        db.commit()
         if user_id_0 is None:
             results = db.query(UserRelations).all()
         elif user_id_0 is not None and user_id_1 is None:
@@ -41,19 +46,44 @@ def get_user_relations(db: Session, user_id_0: int or None, user_id_1: int or No
             "status": status, "results": results
         }
 
-def update_user_relations(db: Session, user_relations: UserRelationsPost):
+def update_user_relations(db: Session, user_relations: UserRelationsPost, user_id: int):
     try:
-        db_userr = UserRelations(
-            **user_relations.dict())
-
-        db.query(UserRelations).filter_by(user_0=db_userr['user_0'], user_1=db_userr['user_1']).update(db_userr)
+        db_user = UserRelations(user_0 = user_relations.user_0, user_1=user_relations.user_1, swipe_0= -1, swipe_1= -1)
+        db.add(db_user)
         db.commit()
-        status = True
+    except Exception as ex:
+        logging.exception(ex)
+        db.rollback()
+    try:
+        check_user = db.query(UserRelations).filter_by(user_0=user_relations.user_0, user_1=user_relations.user_1).first()
+        if(check_user.user_0 == user_id):
+            db.query(UserRelations).filter_by(user_0=user_relations.user_0, user_1=user_relations.user_1).update({"swipe_0": user_relations.swipe})
+            result = db.query(UserRelations).filter_by(user_0=user_relations.user_0, user_1=user_relations.user_1).first()
+            print(result.swipe_0)
+            db.commit()
+            ally = db.query(UserRelations).filter_by(user_0=user_relations.user_0, user_1=user_relations.user_1).first()
+            potential_ally = ally.swipe_1
+            print(potential_ally)
+            status = True
+        else:
+            db.query(UserRelations).filter_by(user_1=user_relations.user_0, user_0=user_relations.user_1).update({"swipe_1": user_relations.swipe})
+            db.commit()
+            result = db.query(UserRelations).filter_by(user_1=user_relations.user_0, user_0=user_relations.user_1).first()
+            print(result.swipe_1)
+            ally = db.query(UserRelations).filter_by(user_1=user_relations.user_0, user_0=user_relations.user_1).first()
+            potential_ally = ally.swipe_0
     except Exception:
-        logging.exception("ErrorUpdatingData")
+        logging.exception(ex)
         status = False
+        potential_ally = False
     finally:
+        print(potential_ally)
+        if potential_ally < 1:
+            potential_ally = False
+        else:
+            potential_ally = True
         return {
+            "potentialAlly": potential_ally,
             "status": status
         }
 

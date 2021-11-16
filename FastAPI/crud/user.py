@@ -2,7 +2,7 @@ import os
 import sys
 from pathlib import Path
 
-from sqlalchemy.sql.expression import false, true
+from sqlalchemy.sql.expression import and_, false, null, or_, true
 
 sys.path.append(os.path.abspath(Path(os.getcwd()) / ".." ))
 import logging
@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 from passlib.hash import sha256_crypt
 from schemas.user import UserPost
 from database.database import engine
-from models.user import User
+from models.user import User, UserPreferences, UserRelations
 import logging
 
 def insert_user(db: Session, user: UserPost):
@@ -104,7 +104,36 @@ def update_password(db: Session, user_id: int, password: str):
     try:
         db.query(User).filter_by(id=user_id).update({'password': password})
         db.commit()
-        status = true
+        status = True
     except:
-        status = false
+        status = False
     return {"status": status}
+
+def retrieve_cards(db: Session, user_id: int):
+    retorno = []
+    users_not_to_select = []
+    try:
+        not_slct = db.query(UserRelations).filter(or_(and_(UserRelations.user_0 == user_id, UserRelations.swipe_0 >= 0), and_(UserRelations.user_1 == user_id, UserRelations.swipe_1 >= 0))).all()
+        for user in not_slct:
+            users_not_to_select.append(user.user_0)
+            users_not_to_select.append(user.user_1)
+        cards = db.query(User, UserPreferences).filter(User.id == UserPreferences.user_id).filter(User.id.notin_(users_not_to_select)).all()
+        for card in cards:
+            retorno.append({
+            "id": card.User.id,
+            "name": card.User.name,
+            "desc": card.UserPreferences.desc,
+            "systems": card.UserPreferences.systems,
+            "status": True
+            })
+    except Exception as ex:
+        logging.exception(ex)
+        retorno.append({
+        "id": "",
+        "name": "",
+        "desc": '',
+        "systems": [],
+        "status": False
+        })
+    return retorno
+    

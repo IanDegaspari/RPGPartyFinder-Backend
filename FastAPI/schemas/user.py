@@ -40,8 +40,7 @@ class UserPreferencesPost(BaseModel):
 class UserRelationsPost(BaseModel):
     user_0: int
     user_1: int
-    swipe_0: bool
-    swipe_1: bool
+    swipe: bool
 
     class Config:
         orm_mode = True
@@ -49,8 +48,7 @@ class UserRelationsPost(BaseModel):
             "example": {
                 "user_0": 1,
                 "user_1": 2,
-                "swipe_0": False,
-                "swipe_1": False
+                "swipe": False
             }
         }
 

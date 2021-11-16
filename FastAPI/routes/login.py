@@ -160,3 +160,23 @@ async def return_img(token: str = Depends(login.oauth2_scheme), db: Session = De
     img = cv2.imread(str(imgs_path))
     res, im_png = cv2.imencode(".png", img)
     return StreamingResponse(io.BytesIO(im_png.tobytes()), media_type="image/png")
+
+@login_router.get("/image/{id}")
+async def return_img_by_id(id: int, token: str = Depends(login.oauth2_scheme), db: Session = Depends(get_db)):
+    imgs_path = Path(f"pictures/user/{id}.png")
+    if not os.path.isfile(imgs_path):
+        robot_assembled = False
+        while not robot_assembled:
+            try:
+                rh = Robohash(str(id))
+                rh.assemble(roboset="any")
+                robot_assembled = True
+            except:
+                rh = Robohash(str(id) + str(time()))
+                rh.assemble(roboset="any")
+                robot_assembled = True
+        with open(imgs_path, 'wb') as f:
+            rh.img.save(f, format="png")
+    img = cv2.imread(str(imgs_path))
+    res, im_png = cv2.imencode(".png", img)
+    return StreamingResponse(io.BytesIO(im_png.tobytes()), media_type="image/png")
