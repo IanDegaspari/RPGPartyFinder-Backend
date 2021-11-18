@@ -2,7 +2,7 @@ import os
 import sys
 from pathlib import Path
 
-from sqlalchemy.sql.elements import Null
+from sqlalchemy.sql.elements import Null, or_, and_
 
 sys.path.append(os.path.abspath(Path(os.getcwd()) / ".." ))
 import logging
@@ -48,34 +48,32 @@ def get_user_relations(db: Session, user_id_0: int or None, user_id_1: int or No
 
 def update_user_relations(db: Session, user_relations: UserRelationsPost, user_id: int):
     try:
-        db_user = UserRelations(user_0 = user_relations.user_0, user_1=user_relations.user_1, swipe_0= -1, swipe_1= -1)
-        db.add(db_user)
-        db.commit()
-    except Exception as ex:
-        logging.exception(ex)
-        db.rollback()
-    try:
-        check_user = db.query(UserRelations).filter_by(user_0=user_relations.user_0, user_1=user_relations.user_1).first()
-        if(check_user.user_0 == user_id):
-            db.query(UserRelations).filter_by(user_0=user_relations.user_0, user_1=user_relations.user_1).update({"swipe_0": user_relations.swipe})
-            result = db.query(UserRelations).filter_by(user_0=user_relations.user_0, user_1=user_relations.user_1).first()
-            print(result.swipe_0)
+        if db.query(UserRelations).filter(or_(and_(UserRelations.user_1==user_relations.user_0,
+                            UserRelations.user_0==user_relations.user_1), and_(UserRelations.user_1==user_relations.user_1,
+                            UserRelations.user_0==user_relations.user_0))).first() is None:
+            db_user = UserRelations(user_0 = user_relations.user_0, 
+                                    user_1=user_relations.user_1, swipe_0= user_relations.swipe, swipe_1= -1)
+            db.add(db_user)
             db.commit()
-            ally = db.query(UserRelations).filter_by(user_0=user_relations.user_0, user_1=user_relations.user_1).first()
-            potential_ally = ally.swipe_1
-            print(potential_ally)
+            potential_ally = -1
             status = True
         else:
-            db.query(UserRelations).filter_by(user_1=user_relations.user_0, user_0=user_relations.user_1).update({"swipe_1": user_relations.swipe})
+            print(user_relations.user_0 , "///" , user_relations.user_1)
+            db.query(UserRelations).filter(UserRelations.user_0==user_relations.user_1,
+                                              UserRelations.user_1==user_relations.user_0).update({"swipe_1": user_relations.swipe})
             db.commit()
-            result = db.query(UserRelations).filter_by(user_1=user_relations.user_0, user_0=user_relations.user_1).first()
-            print(result.swipe_1)
-            ally = db.query(UserRelations).filter_by(user_1=user_relations.user_0, user_0=user_relations.user_1).first()
+            result = db.query(UserRelations).filter(UserRelations.user_1==user_relations.user_0,
+                                                       UserRelations.user_0==user_relations.user_1).first()
+            #print(result.swipe_1)
+            ally = db.query(UserRelations).filter(or_(and_(UserRelations.user_1==user_relations.user_0,
+                            UserRelations.user_0==user_relations.user_1), and_(UserRelations.user_1==user_relations.user_1,
+                            UserRelations.user_0==user_relations.user_0))).first()
             potential_ally = ally.swipe_0
-    except Exception:
+            status = True
+    except Exception as ex:
         logging.exception(ex)
         status = False
-        potential_ally = False
+        potential_ally = False        
     finally:
         print(potential_ally)
         if potential_ally < 1:

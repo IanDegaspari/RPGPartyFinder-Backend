@@ -111,7 +111,7 @@ def update_password(db: Session, user_id: int, password: str):
 
 def retrieve_cards(db: Session, user_id: int):
     retorno = []
-    users_not_to_select = []
+    users_not_to_select = [user_id]
     try:
         not_slct = db.query(UserRelations).filter(or_(and_(UserRelations.user_0 == user_id, UserRelations.swipe_0 >= 0), and_(UserRelations.user_1 == user_id, UserRelations.swipe_1 >= 0))).all()
         for user in not_slct:
@@ -136,4 +136,8 @@ def retrieve_cards(db: Session, user_id: int):
         "status": False
         })
     return retorno
-    
+
+def retrieve_allies(db: Session, id: int):
+    allies = db.query(User).filter(User.id.in_(db.query(UserRelations.user_0,
+             UserRelations.user_1).filter(or_(UserRelations.user_1 == id, UserRelations.user_0 == id)).all())).all()
+    return allies
