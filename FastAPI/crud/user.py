@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 
 from sqlalchemy.sql.expression import and_, false, null, or_, true
+from sqlalchemy.sql.functions import user
 
 sys.path.append(os.path.abspath(Path(os.getcwd()) / ".." ))
 import logging
@@ -138,6 +139,18 @@ def retrieve_cards(db: Session, user_id: int):
     return retorno
 
 def retrieve_allies(db: Session, id: int):
-    allies = db.query(User).filter(User.id.in_(db.query(UserRelations.user_0,
-             UserRelations.user_1).filter(or_(UserRelations.user_1 == id, UserRelations.user_0 == id)).all())).all()
-    return allies
+    try:
+        users_0 = db.query(UserRelations).filter(UserRelations.user_0==id, UserRelations.swipe_0 == 1, UserRelations.swipe_1 ==1).all()
+        users_1 = db.query(UserRelations).filter(UserRelations.user_1==id, UserRelations.swipe_0 == 1, UserRelations.swipe_1 ==1).all()
+        users = []
+        for user in users_0:
+            users.append(user.user_1)
+        for user in users_1:
+            users.append(user.user_0)
+        allies = db.query(User).filter(User.id.in_(users)).all()
+        status = True
+    except:
+        logging.exception("ErrorGettingData")
+        allies = []
+        status = False
+    return {"allies": allies, "status": status, "id": id}
