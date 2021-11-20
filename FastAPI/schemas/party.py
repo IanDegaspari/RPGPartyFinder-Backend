@@ -15,6 +15,20 @@ class PartyPost(BaseModel):
         }
 
 class PartyUsersPost(BaseModel):
+    user_id: int
+    role: bool
+
+    class Config:
+        orm_mode = True
+        schema_extra = {
+            "example": {
+                "party_id": 1,
+                "user_id": 1,
+                "role": True,
+            }
+        }
+
+class PartyUsersPut(BaseModel):
     party_id: int
     user_id: int
     role: bool

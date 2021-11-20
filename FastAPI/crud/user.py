@@ -147,10 +147,16 @@ def retrieve_allies(db: Session, id: int):
             users.append(user.user_1)
         for user in users_1:
             users.append(user.user_0)
-        allies = db.query(User).filter(User.id.in_(users)).all()
+        allies = db.query(User, UserPreferences).filter(User.id == UserPreferences.user_id, User.id.in_(users)).all()
         status = True
+        retorno = []
+        for ally in allies:
+            retorno.append({"id": ally.User.id, "name": ally.User.name, "desc": ally.UserPreferences.desc})
     except:
         logging.exception("ErrorGettingData")
         allies = []
         status = False
-    return {"allies": allies, "status": status, "id": id}
+        retorno = []
+        
+
+    return {"allies": retorno, "status": status}
