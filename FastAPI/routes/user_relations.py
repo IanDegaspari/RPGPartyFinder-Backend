@@ -33,9 +33,10 @@ async def put_rel(relation: UserRelationsPost, response: Response, db: Session =
     user = await retrieve_login_information(db, lg)
     return update_user_relations(db, relation, user.id)
 
-@relations_router.delete("/user/relations")
-async def delete_rel(id: str = Form(...), db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+@relations_router.delete("/user/relations/{id}")
+async def delete_rel(id: int, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     lg = await get_current_user_from_token(token)
     user = await retrieve_login_information(db, lg)
+    print(user.id, " //// ", id)
     return delete_user_relations(db, user.id, id) 
 
