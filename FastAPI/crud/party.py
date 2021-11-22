@@ -5,6 +5,7 @@ sys.path.append(os.path.abspath(Path(os.getcwd()) / ".." ))
 import logging
 from sqlalchemy.orm import Session
 from schemas.party import PartyPost
+from models.party import Party
 from database.database import engine
 from models.party import Party
 
@@ -21,7 +22,8 @@ def insert_party(db: Session, party: PartyPost):
         status = False
     finally:
         return {
-            "status": status
+            "status": status,
+            "id": db_party.party_id
         }
 
 def get_party(db: Session, party_id: int or None):

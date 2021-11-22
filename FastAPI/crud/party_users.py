@@ -9,10 +9,10 @@ from database.database import engine
 from models.party import PartyUsers
 
 
-def insert_party_users(db: Session, party_users: PartyUsersPost):
+def insert_party_users(db: Session, party_users: PartyUsersPost, id: int):
     try:
         db_party_users = PartyUsers(
-            **party_users.dict())
+            **party_users.dict(), party_id = id)
         db.add(db_party_users)
         db.commit()
         status = True
