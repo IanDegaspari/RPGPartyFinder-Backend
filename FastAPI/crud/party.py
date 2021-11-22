@@ -22,10 +22,10 @@ def insert_party(db: Session, party: PartyPost):
         status = False
     finally:
         return {
-            "status": status, "id": party.party_id
+            "status": status, "id": db_party.party_id
         }
 
-def get_party(db: Session, party_id: int or None):
+def retrieve_party(db: Session, party_id: int or None):
     results = []
     try:
         if party_id is not None:

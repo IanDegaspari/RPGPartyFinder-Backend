@@ -12,7 +12,7 @@ sys.path.append(os.path.abspath(Path(os.getcwd()) / ".." ))
 from crud.user_relations import insert_user_relations, update_user_relations, get_user_relations, delete_user_relations
 from schemas.party import PartyPost, PartyUsersPost, PartyUsersPut
 from crud.party_users import insert_party_users
-from crud.party import insert_party
+from crud.party import insert_party, retrieve_party
 from database.database import get_db
 from crud.login import oauth2_scheme, get_current_user_from_token, retrieve_login_information
 
@@ -23,7 +23,11 @@ async def create_party(party: PartyPost, users: List[PartyUsersPost], db: Sessio
     party_return = insert_party(db, party)
     status_users = []
     for user in users:
-        status_users.append(insert_party_users(db, party, party_return["id"]))
+        status_users.append(insert_party_users(db, user, party_return["id"]))
     return {"status_party": party_return["status"], "status_users": status_users, "party_id": party_return["id"]}
+
+@party_router.get("/party")
+async def get_party(id: int or None, db: Session = Depends(get_db), toke: str = Depends(oauth2_scheme)):
+    return retrieve_party(db, id)
 
 
