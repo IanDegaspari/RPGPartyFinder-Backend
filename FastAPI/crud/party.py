@@ -22,7 +22,7 @@ def insert_party(db: Session, party: PartyPost):
         status = False
     finally:
         return {
-            "status": status, "id": party.party_id
+            "status": status, "id": db_party.party_id
         }
 
 def retrieve_party(db: Session, party_id: int or None):
@@ -35,7 +35,7 @@ def retrieve_party(db: Session, party_id: int or None):
         parties = []
         for party in results:
             party_dict = {"party_id": party.party_id, "name": party.name, "desc": party.desc, "allies": []}
-            users = get_party_users(party.party_id)
+            users = get_party_users(db, party.party_id)
             if users['status']:
                 for usr in users['results']:
                     party_dict["allies"].append(usr.user_id)
@@ -56,7 +56,7 @@ def update_party(db: Session, party: PartyPost):
         db_party = Party(
             **party.dict())
         
-        db.query(Party).filter_by(party_id=db_party.party_id).update(db_party)
+        db.query(Party).filter(Party.party_id==db_party.party_id).update({"name": party.name, "desc": party.desc})
         db.commit()
         status = True
     except Exception:

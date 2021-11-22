@@ -1,21 +1,21 @@
 from sqlalchemy import Column
 from sqlalchemy import Column
 from sqlalchemy.sql.schema import ForeignKey
-from pydantic import BaseModel
+from database.database import Base
 from sqlalchemy.dialects.mysql import (
     VARCHAR,
     INTEGER,
     TINYINT,
 )
 
-class Party(BaseModel):
+class Party(Base):
     __tablename__ = "party"
 
     party_id = Column(INTEGER, primary_key=True)
     name = Column(VARCHAR)
     desc = Column(VARCHAR)
 
-class PartyUsers(BaseModel):
+class PartyUsers(Base):
     __tablename__ = "party_users"
 
     party_id = Column(INTEGER, primary_key=True)
