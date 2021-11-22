@@ -27,7 +27,7 @@ async def create_party(party: PartyPost, users: List[PartyUsersPost], db: Sessio
     return {"status_party": party_return["status"], "status_users": status_users, "party_id": party_return["id"]}
 
 @party_router.get("/party")
-async def get_party(id: int or None, db: Session = Depends(get_db), toke: str = Depends(oauth2_scheme)):
+async def get_party(id: int or None, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     return retrieve_party(db, id)
 
 
