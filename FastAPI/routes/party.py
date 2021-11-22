@@ -20,10 +20,10 @@ party_router = APIRouter()
 
 @party_router.post("/party")
 async def create_party(party: PartyPost, users: List[PartyUsersPost], db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
-    status_party, party_id = insert_party(db, party)
+    party_return = insert_party(db, party)
     status_users = []
     for user in users:
-        status_users.append(insert_party_users(db, party, party_id))
-    return {"status_party": status_party, "status_users": status_users, "party_id": party_id}
+        status_users.append(insert_party_users(db, party, party_return["id"]))
+    return {"status_party": party_return["status"], "status_users": status_users, "party_id": party_return["id"]}
 
 
