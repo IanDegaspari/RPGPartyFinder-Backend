@@ -21,7 +21,7 @@ def insert_party(db: Session, party: PartyPost):
         status = False
     finally:
         return {
-            "status": status
+            "status": status, "id": party.party_id
         }
 
 def get_party(db: Session, party_id: int or None):
