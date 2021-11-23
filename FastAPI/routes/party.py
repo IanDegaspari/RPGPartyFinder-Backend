@@ -10,7 +10,9 @@ from typing import List
 from sqlalchemy.orm import Session
 from robohash import Robohash
 import io
+import cv2
 from starlette.responses import StreamingResponse
+from time import time
 sys.path.append(os.path.abspath(Path(os.getcwd()) / ".." ))
 from crud.user_relations import insert_user_relations, update_user_relations, get_user_relations, delete_user_relations
 from schemas.party import PartyPost, PartyPut, PartyUsersPost, PartyUsersWithId
@@ -18,6 +20,7 @@ from crud.party_users import insert_party_users, insert_party_user
 from crud.party import insert_party, retrieve_party, update_party, delete_party
 from database.database import get_db
 from crud.login import oauth2_scheme, get_current_user_from_token, retrieve_login_information
+
 
 party_router = APIRouter()
 
@@ -39,7 +42,7 @@ async def get_party(db: Session = Depends(get_db), token: str = Depends(oauth2_s
 async def put_party(id: int, party: PartyPut, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     return update_party(db, party)
 
-@party_router.delete("party/{id}")
+@party_router.delete("/party/{id}")
 async def dlt_party(id: int, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     return delete_party(db, id)
 
@@ -58,8 +61,8 @@ async def put_image(id: int = Form(...), image: UploadFile = File(...), token: s
     return {"status": status}
 
 @party_router.get("/party/image/{id}")
-async def return_img_by_id(id: int, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    imgs_path = Path(f"pictures/user/{id}.png")
+async def return_img_by_id(id: int, token: str = Depends(oauth2_scheme)):
+    imgs_path = Path(f"pictures/party/{id}.png")
     if not os.path.isfile(imgs_path):
         robot_assembled = False
         while not robot_assembled:
