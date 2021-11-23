@@ -9,7 +9,6 @@ from models.party import Party, PartyUsers
 from database.database import engine
 from crud.party_users import get_party_users
 
-
 def insert_party(db: Session, party: PartyPost):
     try:
         db_party = Party(
@@ -25,13 +24,11 @@ def insert_party(db: Session, party: PartyPost):
             "status": status, "id": db_party.party_id
         }
 
-def retrieve_party(db: Session, party_id: int or None):
-    results = []
+def retrieve_party(db: Session, user_id: int):
     try:
-        if party_id is not None:
-            results = [db.query(Party).filter_by(party_id=party_id).first()]
-        else:
-            results = db.query(Party).all()
+        results = db.query(PartyUsers).filter_by(user_id=user_id).all()
+        party_ids = [pid.party_id for pid in results]
+        results = db.query(Party).filter(Party.party_id.in_(party_ids))
         parties = []
         for party in results:
             party_dict = {"party_id": party.party_id, "name": party.name, "desc": party.desc, "allies": []}
@@ -46,6 +43,7 @@ def retrieve_party(db: Session, party_id: int or None):
     except Exception:
         logging.exception("ErrorGettingData")
         status = False
+        parties = []
     finally:
         return {
             "status": status, "results": parties
