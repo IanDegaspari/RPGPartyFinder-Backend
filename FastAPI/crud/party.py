@@ -70,6 +70,9 @@ def delete_party(db: Session, party_id: int):
         db.query(Party).filter_by(party_id=party_id).delete()
         db.commit()
         status = True
+        img_path = Path(f"pictures/party/{party_id}.png")
+        if os.path.isfile(img_path):
+            os.remove(img_path)
     except Exception:
         logging.exception("ErrorDeletingData")
         status = False
