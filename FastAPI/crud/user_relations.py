@@ -58,7 +58,7 @@ def update_user_relations(db: Session, user_relations: UserRelationsPost, user_i
             potential_ally = -1
             status = True
         else:
-            print(user_relations.user_0 , "///" , user_relations.user_1)
+            # print(user_relations.user_0 , "///" , user_relations.user_1)
             db.query(UserRelations).filter(UserRelations.user_0==user_relations.user_1,
                                               UserRelations.user_1==user_relations.user_0).update({"swipe_1": user_relations.swipe})
             db.commit()
@@ -75,7 +75,7 @@ def update_user_relations(db: Session, user_relations: UserRelationsPost, user_i
         status = False
         potential_ally = False        
     finally:
-        print(potential_ally)
+        # print(potential_ally)
         if potential_ally < 1:
             potential_ally = False
         else:
