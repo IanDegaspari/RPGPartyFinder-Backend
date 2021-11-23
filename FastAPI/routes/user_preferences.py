@@ -1,7 +1,6 @@
 from fastapi import FastAPI, APIRouter, Depends, File
 from fastapi.datastructures import UploadFile
 from fastapi.param_functions import Form
-from sqlalchemy.sql.expression import false, true
 from starlette.responses import Response
 import os
 import sys
@@ -59,7 +58,7 @@ async def put_image(image: UploadFile = File(...), token: str = Depends(oauth2_s
     try:
         with open(Path(f"pictures/user/{user.id}.png"), "wb") as img:
             img.write(image.file.read())
-            status = true
+            status = True
     except:
-        status = false
+        status = False
     return {"status": status}
