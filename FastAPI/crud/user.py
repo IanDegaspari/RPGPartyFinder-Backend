@@ -117,10 +117,10 @@ def retrieve_cards(db: Session, user_id: int):
     try:
         not_slct = db.query(UserRelations).filter(or_(and_(UserRelations.user_0 == user_id, UserRelations.swipe_0 >= 0), and_(UserRelations.user_1 == user_id, UserRelations.swipe_1 >= 0))).all()
         for user in not_slct:
-            if user.user_0 not in users_not_to_select:
-                users_not_to_select.append(user.user_0)
-            if user.user_1 not in users_not_to_select:
-                users_not_to_select.append(user.user_1)
+            #if user.user_0 not in users_not_to_select:
+            users_not_to_select.append(user.user_0)
+            #if user.user_1 not in users_not_to_select:
+            users_not_to_select.append(user.user_1)
         cards = db.query(User, UserPreferences).filter(User.id == UserPreferences.user_id).filter(User.id.notin_(users_not_to_select)).all()
         for card in cards:
             retorno.append({
@@ -139,7 +139,8 @@ def retrieve_cards(db: Session, user_id: int):
         "systems": [],
         "status": False
         })
-    return random.shuffle(retorno)
+    random.shuffle(retorno)
+    return retorno
 
 def retrieve_allies(db: Session, id: int):
     try:

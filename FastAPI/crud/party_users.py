@@ -1,10 +1,11 @@
 import os
 import sys
 from pathlib import Path
+
 sys.path.append(os.path.abspath(Path(os.getcwd()) / ".." ))
 import logging
 from sqlalchemy.orm import Session
-from schemas.party import PartyUsersPost, PartyUsersPut
+from schemas.party import PartyUsersPost, PartyUsersWithId
 from database.database import engine
 from models.party import PartyUsers
 
@@ -24,7 +25,7 @@ def insert_party_users(db: Session, party_users: PartyUsersPost, id: int):
             "status": status
         }
     
-def insert_party_users(db: Session, party_users: PartyUsersPut):
+def insert_party_user(db: Session, party_users: PartyUsersWithId):
     try:
         db_party_users = PartyUsers(
             **party_users.dict())

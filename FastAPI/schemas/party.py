@@ -14,6 +14,21 @@ class PartyPost(BaseModel):
             }
         }
 
+class PartyPut(BaseModel):
+    id: int
+    name: str
+    desc: str
+
+    class Config:
+        orm_mode = True
+        schema_extra = {
+            "example": {
+                "id": 1,
+                "name": "party do andre",
+                "desc": "muito combate"
+            }
+        }
+
 class PartyUsersPost(BaseModel):
     user_id: int
     role: bool
@@ -27,7 +42,7 @@ class PartyUsersPost(BaseModel):
             }
         }
 
-class PartyUsersPut(BaseModel):
+class PartyUsersWithId(BaseModel):
     party_id: int
     user_id: int
     role: bool
