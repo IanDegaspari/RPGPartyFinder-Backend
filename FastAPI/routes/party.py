@@ -8,6 +8,9 @@ import sys
 from pathlib import Path
 from typing import List
 from sqlalchemy.orm import Session
+from robohash import Robohash
+import io
+from starlette.responses import StreamingResponse
 sys.path.append(os.path.abspath(Path(os.getcwd()) / ".." ))
 from crud.user_relations import insert_user_relations, update_user_relations, get_user_relations, delete_user_relations
 from schemas.party import PartyPost, PartyPut, PartyUsersPost, PartyUsersWithId
@@ -53,3 +56,23 @@ async def put_image(id: int = Form(...), image: UploadFile = File(...), token: s
     except:
         status = False
     return {"status": status}
+
+@party_router.get("/party/image/{id}")
+async def return_img_by_id(id: int, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    imgs_path = Path(f"pictures/user/{id}.png")
+    if not os.path.isfile(imgs_path):
+        robot_assembled = False
+        while not robot_assembled:
+            try:
+                rh = Robohash(str(id))
+                rh.assemble(roboset="any")
+                robot_assembled = True
+            except:
+                rh = Robohash(str(id) + str(time()))
+                rh.assemble(roboset="any")
+                robot_assembled = True
+        with open(imgs_path, 'wb') as f:
+            rh.img.save(f, format="png")
+    img = cv2.imread(str(imgs_path))
+    res, im_png = cv2.imencode(".png", img)
+    return StreamingResponse(io.BytesIO(im_png.tobytes()), media_type="image/png")
