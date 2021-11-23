@@ -30,4 +30,6 @@ async def create_party(party: PartyPost, users: List[PartyUsersPost], db: Sessio
 async def get_party(id: int or None, db: Session = Depends(get_db), toke: str = Depends(oauth2_scheme)):
     return retrieve_party(db, id)
 
-
+@party_router.put("/party/{id}")
+async def put_party(id: int, party: PartyPost, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+    pass
