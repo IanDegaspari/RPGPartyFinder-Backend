@@ -87,7 +87,7 @@ def update_user_relations(db: Session, user_relations: UserRelationsPost, user_i
 
 def delete_user_relations(db: Session, user_id_0: int, user_id_1: int):
     try:
-        db.query(UserRelations).filter_by(or_(and_(UserRelations.user_0==user_id_0, UserRelations.user_1==user_id_1),
+        db.query(UserRelations).filter(or_(and_(UserRelations.user_0==user_id_0, UserRelations.user_1==user_id_1),
                                               and_(UserRelations.user_0==user_id_1, UserRelations.user_1==user_id_0))).delete()
         db.commit()
         status = True
